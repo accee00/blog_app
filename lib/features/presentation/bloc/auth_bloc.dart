@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:blog_app/features/domain/entities/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,6 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.userSignUp,
   }) : super(AuthInitial()) {
     on<AuthSignUp>((event, emit) async {
+      emit(AuthLoading());
       final response = await userSignUp.call(
         UserSignupParameter(
             name: event.name, email: event.email, password: event.password),
@@ -22,8 +24,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         (l) => emit(
           AuthFailure(l.message),
         ),
-        (f) => emit(
-          AuthSuccess(f),
+        (user) => emit(
+          AuthSuccess(user),
         ),
       );
     });

@@ -1,5 +1,6 @@
 import 'package:blog_app/core/text/app_text.dart';
 import 'package:blog_app/core/text/app_text_style.dart';
+import 'package:blog_app/core/utils/show_snackbar.dart';
 import 'package:blog_app/features/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/presentation/widgets/auth_field.dart';
 import 'package:blog_app/features/presentation/widgets/auth_gesture_detector.dart';
@@ -34,84 +35,87 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "${AppText.signup}. ",
-                style: AppTextStyle.heading,
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              AuthField(
-                controller: _name,
-                hintText: AppText.name,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              AuthField(
-                controller: _emailcontroller,
-                hintText: AppText.email,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              AuthField(
-                isPass: true,
-                controller: _passwordcontroller,
-                hintText: AppText.password,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              BlocListener<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is AuthSuccess) {
-                    print('Signupdone');
-                  }
-                  if (state is AuthFailure) {
-                    print(state.message);
-                  }
-                },
-                child: AuthGradientButton(
-                  onpress: () {
-                    if (formKey.currentState!.validate()) {
-                      context.read<AuthBloc>().add(
-                            AuthSignUp(
-                              name: _name.text.trim(),
-                              password: _passwordcontroller.text.trim(),
-                              email: _emailcontroller.text.trim(),
-                            ),
-                          );
-                    }
-                  },
-                  title: AppText.signup,
-                ),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    AppText.alreadyHaveAnAcc,
-                    style: AppTextStyle.footerTextStyle,
-                  ),
-                  AuthGestureDetector(
-                    title: AppText.signin,
-                    onTapp: () {
-                      Navigator.pushNamed(context, AppRoutes.signInRoute);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthFailure) {
+              showSnackbar(context, state.message);
+            }
+          },
+          builder: (context, state) {
+            if (state is AuthLoading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Form(
+              key: formKey,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "${AppText.signup}. ",
+                      style: AppTextStyle.heading,
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    AuthField(
+                      controller: _name,
+                      hintText: AppText.name,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    AuthField(
+                      controller: _emailcontroller,
+                      hintText: AppText.email,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    AuthField(
+                      isPass: true,
+                      controller: _passwordcontroller,
+                      hintText: AppText.password,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    AuthGradientButton(
+                      onpress: () {
+                        if (formKey.currentState!.validate()) {
+                          context.read<AuthBloc>().add(
+                                AuthSignUp(
+                                  name: _name.text.trim(),
+                                  password: _passwordcontroller.text.trim(),
+                                  email: _emailcontroller.text.trim(),
+                                ),
+                              );
+                        }
+                      },
+                      title: AppText.signup,
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          AppText.alreadyHaveAnAcc,
+                          style: AppTextStyle.footerTextStyle,
+                        ),
+                        AuthGestureDetector(
+                          title: AppText.signin,
+                          onTapp: () {
+                            Navigator.pushNamed(context, AppRoutes.signInRoute);
+                          },
+                        ),
+                      ],
+                    ),
+                  ]),
+            );
+          },
         ),
       ),
     );
