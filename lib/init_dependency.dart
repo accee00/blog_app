@@ -1,6 +1,7 @@
 import 'package:blog_app/features/data/datasource/auth_remote_data_source.dart';
 import 'package:blog_app/features/data/repository/auth_repository_imp.dart';
 import 'package:blog_app/features/domain/repository/auth_repository.dart';
+import 'package:blog_app/features/domain/usecases/user_sign_in.dart';
 import 'package:blog_app/features/domain/usecases/user_sign_up.dart';
 import 'package:blog_app/features/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -35,8 +36,14 @@ void _initAuth() {
     ),
   );
   serviceLocator.registerFactory(
+    () => UserSignIn(
+      serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(
     () => AuthBloc(
       userSignUp: serviceLocator(),
+      userSignIn: serviceLocator(),
     ),
   );
 }
