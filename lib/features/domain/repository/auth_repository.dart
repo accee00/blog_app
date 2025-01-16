@@ -1,13 +1,14 @@
+// abstract interface forces sub class to must implement the Parent class functions.
 import 'package:blog_app/core/error/failure.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class AuthRepository {
-  // All methods in an interface class must be implemented
-  // explicitly by the implementing class.
+  // Either if it is a success return User
+  // if failure return Failuer
   Future<Either<Failure, String>> signUpWithEmailPassword({
+    required String name,
     required String email,
     required String password,
-    required String name,
   });
   Future<Either<Failure, String>> logInWithEmailPassword({
     required String email,

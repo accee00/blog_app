@@ -1,7 +1,7 @@
 import 'package:blog_app/core/error/exception.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-abstract interface class AuthRemoteDatasource {
+abstract interface class AuthRemoteDataSource {
   Future<String> signUpWithEmailPassword({
     required String name,
     required String email,
@@ -13,9 +13,10 @@ abstract interface class AuthRemoteDatasource {
   });
 }
 
-class AuthRemoteDataSourcesImplementation implements AuthRemoteDatasource {
+class AuthRemoteDataSourceImplementation implements AuthRemoteDataSource {
+  // injecting supabase client over here.
   final SupabaseClient client;
-  AuthRemoteDataSourcesImplementation(this.client);
+  AuthRemoteDataSourceImplementation({required this.client});
   @override
   Future<String> logInWithEmailPassword({
     required String email,
@@ -31,13 +32,12 @@ class AuthRemoteDataSourcesImplementation implements AuthRemoteDatasource {
     required String password,
   }) async {
     try {
-      final response = await client.auth.signUp(
-        password: password,
-        email: email,
-        data: {'name': name},
-      );
+      final response =
+          await client.auth.signUp(password: password, email: email, data: {
+        'name': name,
+      });
       if (response.user == null) {
-        throw ServerExceptions('User is null');
+        throw ServerExceptions("User in null");
       }
       return response.user!.id;
     } catch (e) {

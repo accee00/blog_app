@@ -1,9 +1,11 @@
 import 'package:blog_app/core/text/app_text.dart';
 import 'package:blog_app/core/text/app_text_style.dart';
+import 'package:blog_app/features/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/presentation/widgets/auth_field.dart';
 import 'package:blog_app/features/presentation/widgets/auth_gesture_detector.dart';
 import 'package:blog_app/features/presentation/widgets/auth_gradient_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/routes/app_routes.dart';
 
@@ -66,8 +68,29 @@ class _SignupPageState extends State<SignupPage> {
               const SizedBox(
                 height: 20,
               ),
-              AuthGradientButton(
-                title: AppText.signup,
+              BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthSuccess) {
+                    print('Signupdone');
+                  }
+                  if (state is AuthFailure) {
+                    print(state.message);
+                  }
+                },
+                child: AuthGradientButton(
+                  onpress: () {
+                    if (formKey.currentState!.validate()) {
+                      context.read<AuthBloc>().add(
+                            AuthSignUp(
+                              name: _name.text.trim(),
+                              password: _passwordcontroller.text.trim(),
+                              email: _emailcontroller.text.trim(),
+                            ),
+                          );
+                    }
+                  },
+                  title: AppText.signup,
+                ),
               ),
               const SizedBox(
                 height: 25,

@@ -1,4 +1,4 @@
 class ServerExceptions implements Exception {
   final String message;
-  ServerExceptions(this.message);
+  const ServerExceptions(this.message);
 }
