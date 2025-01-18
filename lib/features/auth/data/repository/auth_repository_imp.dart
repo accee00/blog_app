@@ -1,8 +1,8 @@
 import 'package:blog_app/core/error/exception.dart';
 import 'package:blog_app/core/error/failure.dart';
-import 'package:blog_app/features/data/datasource/auth_remote_data_source.dart';
+import 'package:blog_app/features/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:blog_app/core/entities/user.dart';
-import 'package:blog_app/features/domain/repository/auth_repository.dart';
+import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
 class AuthRepositoryImplementation implements AuthRepository {

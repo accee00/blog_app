@@ -10,6 +10,9 @@ class AppTheme {
         borderRadius: BorderRadius.circular(10),
       );
   static final themeData = ThemeData.dark().copyWith(
+    appBarTheme: AppBarTheme(
+      backgroundColor: AppPallete.backgroundColor,
+    ),
     scaffoldBackgroundColor: AppPallete.backgroundColor,
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: EdgeInsets.all(27),

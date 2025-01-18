@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/text/app_text_style.dart';
-import '../../../core/theme/app_pallete.dart';
+import '../../../../core/text/app_text_style.dart';
+import '../../../../core/theme/app_pallete.dart';
 
 class AuthGestureDetector extends StatelessWidget {
   const AuthGestureDetector(
