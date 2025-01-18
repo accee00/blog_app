@@ -3,6 +3,7 @@ import 'package:blog_app/features/data/model/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {
+  Session? get currentUserSession;
   Future<UserModel> signUpWithEmailPassword({
     required String name,
     required String email,
@@ -12,12 +13,17 @@ abstract interface class AuthRemoteDataSource {
     required String email,
     required String password,
   });
+  Future<UserModel?> getCurrentUserData();
 }
 
 class AuthRemoteDataSourceImplementation implements AuthRemoteDataSource {
   // injecting supabase client over here.
   final SupabaseClient client;
   AuthRemoteDataSourceImplementation({required this.client});
+
+  @override
+  Session? get currentUserSession => client.auth.currentSession;
+
   @override
   Future<UserModel> logInWithEmailPassword({
     required String email,
@@ -54,6 +60,26 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDataSource {
       return UserModel.fromJason(
         response.user!.toJson(),
       );
+    } catch (e) {
+      throw ServerExceptions(e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel?> getCurrentUserData() async {
+    try {
+      if (currentUserSession != null) {
+        /// I want data from profiles table select all column.
+        /// Get user id that is equal to current user id.
+        final userData = await client.from('profiles').select().eq(
+              'id',
+              currentUserSession!.user.id,
+            );
+        return UserModel.fromJason(userData.first).copyWith(
+          email: currentUserSession!.user.email,
+        );
+      }
+      return null;
     } catch (e) {
       throw ServerExceptions(e.toString());
     }
