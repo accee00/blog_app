@@ -3,6 +3,7 @@ import 'package:blog_app/core/routes/app_routes.dart';
 import 'package:blog_app/core/theme/theme.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/auth/presentation/pages/login.dart';
+import 'package:blog_app/features/blog/bloc/blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog_page.dart';
 import 'package:blog_app/init_dependency.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,9 @@ Future<void> main() async {
       ),
       BlocProvider<AuthBloc>(
         create: (_) => serviceLocator<AuthBloc>(),
+      ),
+      BlocProvider<BlogBloc>(
+        create: (_) => serviceLocator<BlogBloc>(),
       ),
     ],
     child: MyApp(),
@@ -48,15 +52,12 @@ class _MyAppState extends State<MyApp> {
       theme: AppTheme.themeData,
       routes: AppRoutes.routes,
       home: BlocSelector<AppUserCubit, AppUserState, bool>(
-        selector: (state) {
-          return state is AppUserLoggedIn;
-        },
+        selector: (state) => state is AppUserLoggedIn,
         builder: (context, state) {
           if (state is! AppUserLoggedIn) {
             return BlogPage();
-          } else {
-            return LoginPage();
           }
+          return LoginPage();
         },
       ),
     );

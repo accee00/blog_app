@@ -61,4 +61,16 @@ class AuthRepositoryImplementation implements AuthRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, void>> logOutCurrentUser() async {
+    try {
+      await remoteDataSource.logOutCurrentUser();
+      return right(null);
+    } on ServerExceptions catch (e) {
+      return left(Failure(e.message));
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
 }
