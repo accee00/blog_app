@@ -11,19 +11,19 @@ class UpdateBlog implements Usecase<Blog, UpdateBlogParams> {
   @override
   Future<Either<Failure, Blog>> call(UpdateBlogParams parameter) {
     return repository.updateBlog(
-        posterId: parameter.posterId,
+        blogId: parameter.blogId,
         title: parameter.title,
         content: parameter.content);
   }
 }
 
 class UpdateBlogParams {
-  final String posterId;
+  final String blogId;
   final String title;
   final String content;
 
   UpdateBlogParams({
-    required this.posterId,
+    required this.blogId,
     required this.title,
     required this.content,
   });

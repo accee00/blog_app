@@ -52,14 +52,24 @@ class BlogRepoImp implements BlogRepository {
 
   @override
   Future<Either<Failure, BlogModel>> updateBlog({
-    required String posterId,
+    required String blogId,
     required String title,
     required String content,
   }) async {
     try {
       final blog = await blogRemoteDataSource.editBlog(
-          posterId: posterId, title: title, content: content);
+          blogId: blogId, title: title, content: content);
       return right(blog);
+    } on ServerExceptions catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> deleteBlog({required String blogId}) async {
+    try {
+      final result = await blogRemoteDataSource.deleteBlog(blogId: blogId);
+      return right(result);
     } on ServerExceptions catch (e) {
       return left(Failure(e.message));
     }

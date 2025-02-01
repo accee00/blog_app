@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:blog_app/core/error/exception.dart';
 import 'package:blog_app/features/blog/data/model/blog_model.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class BlogRemoteDataSource {
@@ -12,9 +13,12 @@ abstract interface class BlogRemoteDataSource {
   });
   Future<List<BlogModel>> getAllBlog();
   Future<BlogModel> editBlog({
-    required String posterId,
+    required String blogId,
     required String title,
     required String content,
+  });
+  Future<Unit> deleteBlog({
+    required String blogId,
   });
 }
 
@@ -67,7 +71,7 @@ class BlogRemoteDataSourceImp extends BlogRemoteDataSource {
 
   @override
   Future<BlogModel> editBlog({
-    required String posterId,
+    required String blogId,
     required String title,
     required String content,
   }) async {
@@ -78,13 +82,25 @@ class BlogRemoteDataSourceImp extends BlogRemoteDataSource {
             'title': title,
             'content': content,
           })
-          .eq('id', posterId)
+          .eq('id', blogId)
           .select('*, profiles(name)')
           .single();
 
       return BlogModel.fromJason(blogData).copyWith(
         posterName: blogData['profiles']['name'],
       );
+    } catch (e) {
+      throw ServerExceptions(e.toString());
+    }
+  }
+
+  @override
+  Future<Unit> deleteBlog({
+    required String blogId,
+  }) async {
+    try {
+      final res = await supabaseClient.from('blogs').delete().eq('id', blogId);
+      return res;
     } catch (e) {
       throw ServerExceptions(e.toString());
     }

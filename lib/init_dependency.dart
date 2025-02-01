@@ -8,7 +8,8 @@ import 'package:blog_app/features/auth/domain/usecases/log_out_user.dart';
 import 'package:blog_app/features/auth/domain/usecases/user_sign_in.dart';
 import 'package:blog_app/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:blog_app/features/blog/bloc/blog_bloc.dart';
+import 'package:blog_app/features/blog/domain/usecases/delete_blog.dart';
+import 'package:blog_app/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blog_app/features/blog/data/datasource/blog_remote_data_source.dart';
 import 'package:blog_app/features/blog/data/repository/blog_repo_imp.dart';
 import 'package:blog_app/features/blog/domain/repository/blog_repository.dart';
@@ -139,12 +140,18 @@ void _initBlog() {
       repository: serviceLocator(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => DeleteBlog(
+      repository: serviceLocator(),
+    ),
+  );
   // Register BLoC for blog management
   serviceLocator.registerLazySingleton(
     () => BlogBloc(
       uploadBlog: serviceLocator(),
       getBlog: serviceLocator(),
       updateBlog: serviceLocator(),
+      deleteBlog: serviceLocator(),
     ),
   );
 }

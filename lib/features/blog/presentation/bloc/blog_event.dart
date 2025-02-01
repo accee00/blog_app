@@ -22,13 +22,21 @@ final class BlogUploadEvent extends BlogEvent {
 final class BlogFetchAllBlogs extends BlogEvent {}
 
 final class BlogUpdateEvent extends BlogEvent {
-  final String posterId;
+  final String blogId;
   final String title;
   final String content;
 
   BlogUpdateEvent({
-    required this.posterId,
+    required this.blogId,
     required this.title,
     required this.content,
+  });
+}
+
+final class BlogDeleteEvent extends BlogEvent {
+  final String blogId;
+
+  BlogDeleteEvent({
+    required this.blogId,
   });
 }

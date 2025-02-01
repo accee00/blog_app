@@ -1,6 +1,8 @@
+import 'package:blog_app/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blog_app/features/blog/domain/entities/blog.dart';
 import 'package:blog_app/features/blog/presentation/widgets/blog_editor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UpdateBloc extends StatefulWidget {
   const UpdateBloc({super.key, required this.blog});
@@ -18,9 +20,7 @@ class _UpdateBlocState extends State<UpdateBloc> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.blog.title);
-    _contentController = TextEditingController(
-        text: widget.blog
-            .content); // Assuming you want to initialize with content as well
+    _contentController = TextEditingController(text: widget.blog.content);
   }
 
   @override
@@ -35,6 +35,20 @@ class _UpdateBlocState extends State<UpdateBloc> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Update Blog!"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.read<BlogBloc>().add(
+                    BlogUpdateEvent(
+                      blogId: widget.blog.id,
+                      title: _titleController.text,
+                      content: _contentController.text,
+                    ),
+                  );
+            },
+            icon: Icon(Icons.done_outlined),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
