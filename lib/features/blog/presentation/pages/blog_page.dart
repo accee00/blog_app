@@ -1,8 +1,11 @@
+import 'package:blog_app/core/cubit/app_user/app_user_cubit.dart';
 import 'package:blog_app/core/routes/app_routes.dart';
 import 'package:blog_app/core/text/app_text.dart';
+import 'package:blog_app/core/theme/app_pallete.dart';
 import 'package:blog_app/core/utils/show_snackbar.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/blog/bloc/blog_bloc.dart';
+import 'package:blog_app/features/blog/presentation/widgets/blog_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,13 +32,7 @@ class _BlogPageState extends State<BlogPage> {
             AppText.appBarTitle,
           ),
           actions: [
-            BlocConsumer<AuthBloc, AuthState>(
-              listener: (context, state) {
-                if (state is AuthInitial) {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, AppRoutes.signInRoute, (route) => false);
-                }
-              },
+            BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
                 return IconButton(
                   onPressed: () {
@@ -68,12 +65,22 @@ class _BlogPageState extends State<BlogPage> {
               );
             }
             if (state is BlogDisplaySucess) {
+              final posterId =
+                  (context.read<AppUserCubit>().state as AppUserLoggedIn)
+                      .user
+                      .id;
               return ListView.builder(
                 itemCount: state.blog.length,
                 itemBuilder: (context, index) {
                   final blog = state.blog[index];
-                  return Text(
-                    blog.title,
+                  return BlogTile(
+                    isPoster: blog.posterId == posterId,
+                    color: index % 3 == 0
+                        ? AppPallete.gradient1
+                        : index % 3 == 1
+                            ? AppPallete.gradient2
+                            : AppPallete.gradient3,
+                    blog: blog,
                   );
                 },
               );

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:blog_app/features/auth/domain/usecases/current_user.dart';
 import 'package:blog_app/features/blog/domain/entities/blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_blog.dart';
+import 'package:blog_app/features/blog/domain/usecases/update_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,9 @@ part 'blog_state.dart';
 class BlogBloc extends Bloc<BlogEvent, BlogState> {
   final UploadBlog uploadBlog;
   final GetBlog getBlog;
+  final UpdateBlog updateBlog;
   BlogBloc({
+    required this.updateBlog,
     required this.getBlog,
     required this.uploadBlog,
   }) : super(BlogInitial()) {
@@ -22,6 +25,20 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     });
     on<BlogUploadEvent>(_onBlogUpload);
     on<BlogFetchAllBlogs>(_onFetchAllBlogs);
+    on<BlogUpdateEvent>(
+      (event, emit) async {
+        final res = await updateBlog.call(UpdateBlogParams(
+            posterId: event.posterId,
+            title: event.title,
+            content: event.content));
+        res.fold(
+          (l) => emit(BlogFailure(l.message)),
+          (s) => emit(
+            BlogDisplaySucess([s]),
+          ),
+        );
+      },
+    );
   }
   void _onBlogUpload(BlogUploadEvent event, Emitter<BlogState> emit) async {
     final result = await uploadBlog.call(

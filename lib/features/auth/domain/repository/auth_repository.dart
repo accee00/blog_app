@@ -1,4 +1,3 @@
-// abstract interface forces sub class to must implement the Parent class functions.
 import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/core/entities/user.dart';
 import 'package:fpdart/fpdart.dart';
@@ -16,5 +15,5 @@ abstract interface class AuthRepository {
     required String password,
   });
   Future<Either<Failure, User>> getCurrentUser();
-  Future<Either<Failure, void>> logOutCurrentUser();
+  Future<Either<Failure, Unit>> logOutCurrentUser();
 }

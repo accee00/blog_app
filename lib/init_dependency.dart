@@ -1,4 +1,5 @@
 import 'package:blog_app/core/cubit/app_user/app_user_cubit.dart';
+import 'package:blog_app/core/network/connection_checker.dart';
 import 'package:blog_app/features/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:blog_app/features/auth/data/repository/auth_repository_imp.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
@@ -12,9 +13,11 @@ import 'package:blog_app/features/blog/data/datasource/blog_remote_data_source.d
 import 'package:blog_app/features/blog/data/repository/blog_repo_imp.dart';
 import 'package:blog_app/features/blog/domain/repository/blog_repository.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_blog.dart';
+import 'package:blog_app/features/blog/domain/usecases/update_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final serviceLocator = GetIt.instance;
@@ -27,6 +30,16 @@ Future<void> initDependency() async {
   );
   serviceLocator.registerLazySingleton(() => supabase.client);
   serviceLocator.registerLazySingleton(() => AppUserCubit());
+  serviceLocator.registerLazySingleton(
+    () => InternetConnectionChecker.createInstance(),
+  );
+
+  // Register ConnectionChecker interface with its implementation
+  serviceLocator.registerLazySingleton<ConnectionChecker>(
+    () => ConnectionCheckerImply(
+      serviceLocator(),
+    ),
+  );
 }
 
 /// Initializes the authentication-related dependencies in the service locator.
@@ -46,6 +59,7 @@ void _initAuth() {
   // Register the authentication repository.
   serviceLocator.registerFactory<AuthRepository>(
     () => AuthRepositoryImplementation(
+      serviceLocator(),
       serviceLocator(),
     ),
   );
@@ -120,11 +134,17 @@ void _initBlog() {
       serviceLocator(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => UpdateBlog(
+      repository: serviceLocator(),
+    ),
+  );
   // Register BLoC for blog management
   serviceLocator.registerLazySingleton(
     () => BlogBloc(
       uploadBlog: serviceLocator(),
       getBlog: serviceLocator(),
+      updateBlog: serviceLocator(),
     ),
   );
 }

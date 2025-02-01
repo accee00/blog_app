@@ -1,5 +1,6 @@
 import 'package:blog_app/core/error/exception.dart';
 import 'package:blog_app/features/auth/data/model/user_model.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {
@@ -14,7 +15,7 @@ abstract interface class AuthRemoteDataSource {
     required String password,
   });
   Future<UserModel?> getCurrentUserData();
-  Future<void> logOutCurrentUser();
+  Future<Unit> logOutCurrentUser();
 }
 
 class AuthRemoteDataSourceImplementation implements AuthRemoteDataSource {
@@ -87,9 +88,10 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> logOutCurrentUser() async {
+  Future<Unit> logOutCurrentUser() async {
     try {
       await client.auth.signOut();
+      return unit;
     } catch (e) {
       throw ServerExceptions(e.toString());
     }

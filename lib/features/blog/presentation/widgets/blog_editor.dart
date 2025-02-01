@@ -5,9 +5,11 @@ class BlogEditor extends StatelessWidget {
     super.key,
     required this.controller,
     required this.hintText,
+    this.initval,
   });
   final TextEditingController controller;
   final String hintText;
+  final String? initval;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -16,6 +18,7 @@ class BlogEditor extends StatelessWidget {
         hintText: hintText,
       ),
       maxLines: null,
+      initialValue: initval,
       validator: (value) {
         if (value!.trim().isEmpty) {
           return "$hintText is missing";
