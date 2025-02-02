@@ -32,46 +32,53 @@ class _UpdateBlocState extends State<UpdateBloc> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Update Blog!"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.read<BlogBloc>().add(
-                    BlogUpdateEvent(
-                      blogId: widget.blog.id,
-                      title: _titleController.text,
-                      content: _contentController.text,
-                    ),
-                  );
-            },
-            icon: Icon(Icons.done_outlined),
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 20,
-            children: [
-              Text(
-                "You can only Update Blog Title and it's content",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
+    return BlocListener<BlogBloc, BlogState>(
+      listener: (context, state) {
+        if (state is BlogSuccess) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Update Blog!"),
+          actions: [
+            IconButton(
+              onPressed: () {
+                context.read<BlogBloc>().add(
+                      BlogUpdateEvent(
+                        blogId: widget.blog.id,
+                        title: _titleController.text,
+                        content: _contentController.text,
+                      ),
+                    );
+              },
+              icon: Icon(Icons.done_outlined),
+            )
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 20,
+              children: [
+                Text(
+                  "You can only Update Blog Title and it's content",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-              BlogEditor(
-                controller: _titleController,
-                hintText: 'Title',
-              ),
-              BlogEditor(
-                controller: _contentController,
-                hintText: "Content",
-              ),
-            ],
+                BlogEditor(
+                  controller: _titleController,
+                  hintText: 'Title',
+                ),
+                BlogEditor(
+                  controller: _contentController,
+                  hintText: "Content",
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:blog_app/core/cubit/app_user/app_user_cubit.dart';
 import 'package:blog_app/core/routes/app_routes.dart';
 import 'package:blog_app/core/text/app_text.dart';
@@ -59,7 +57,6 @@ class _BlogPageState extends State<BlogPage> {
             if (state is BlogFailure) {
               showSnackbar(context, state.error);
             }
-            if (state is BlogSuccess) {}
           },
           builder: (context, state) {
             if (state is BlogLoading) {

@@ -46,18 +46,22 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
         blogId: event.blogId, title: event.title, content: event.content));
     res.fold(
       (l) => emit(BlogFailure(l.message)),
-      (s) => emit(BlogSuccess()),
+      (s) {
+        emit(BlogSuccess());
+        add(BlogFetchAllBlogs());
+      },
     );
   }
 
   void _onBlogUpload(BlogUploadEvent event, Emitter<BlogState> emit) async {
     final result = await uploadBlog.call(
       UploadBlogParams(
-          posterId: event.posterId,
-          title: event.title,
-          content: event.content,
-          image: event.image,
-          topics: event.topics),
+        posterId: event.posterId,
+        title: event.title,
+        content: event.content,
+        image: event.image,
+        topics: event.topics,
+      ),
     );
     result.fold(
       (l) => emit(
