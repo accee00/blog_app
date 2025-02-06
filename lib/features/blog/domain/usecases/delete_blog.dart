@@ -4,13 +4,13 @@ import 'package:fpdart/fpdart.dart';
 
 import '../repository/blog_repository.dart';
 
-class DeleteBlog implements Usecase<Unit, DeleteBlogParams> {
+class DeleteBlog implements Usecase<void, DeleteBlogParams> {
   final BlogRepository repository;
 
   DeleteBlog({required this.repository});
 
   @override
-  Future<Either<Failure, Unit>> call(DeleteBlogParams parameter) async {
+  Future<Either<Failure, void>> call(DeleteBlogParams parameter) async {
     return await repository.deleteBlog(blogId: parameter.blogId);
   }
 }

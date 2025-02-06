@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:blog_app/core/error/exception.dart';
 import 'package:blog_app/features/blog/data/model/blog_model.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class BlogRemoteDataSource {
@@ -17,7 +15,7 @@ abstract interface class BlogRemoteDataSource {
     required String title,
     required String content,
   });
-  Future<Unit> deleteBlog({
+  Future<void> deleteBlog({
     required String blogId,
   });
 }
@@ -95,7 +93,7 @@ class BlogRemoteDataSourceImp extends BlogRemoteDataSource {
   }
 
   @override
-  Future<Unit> deleteBlog({
+  Future<void> deleteBlog({
     required String blogId,
   }) async {
     try {

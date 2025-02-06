@@ -37,7 +37,10 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     final res = await deleteBlog.call(DeleteBlogParams(blogId: event.blogId));
     res.fold(
       (l) => emit(BlogFailure(l.message)),
-      (_) => emit(BlogSuccess()),
+      (_) {
+        emit(BlogSuccess());
+        add(BlogFetchAllBlogs());
+      },
     );
   }
 
