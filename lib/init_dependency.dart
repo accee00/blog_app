@@ -51,14 +51,14 @@ Future<void> initDependency() async {
 /// application.
 void _initAuth() {
   // Register the remote data source for authentication.
-  serviceLocator.registerFactory<AuthRemoteDataSource>(
+  serviceLocator.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImplementation(
       client: serviceLocator(),
     ),
   );
 
   // Register the authentication repository.
-  serviceLocator.registerFactory<AuthRepository>(
+  serviceLocator.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImplementation(
       serviceLocator(),
       serviceLocator(),

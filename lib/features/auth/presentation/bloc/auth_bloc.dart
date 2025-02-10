@@ -34,13 +34,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthIsUserLoggedIn event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoading()); // Emit loading state immediately
+    emit(AuthLoading());
 
     final res = await currentUser(Noparams());
 
     await res.fold(
       (failure) async {
-        emit(AuthFailure(failure.message));
+        emit(AuthInitial());
         // Ensure AppUserCubit is updated
         appUserCubit.logOut();
       },

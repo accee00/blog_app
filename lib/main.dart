@@ -54,7 +54,6 @@ class _MyAppState extends State<MyApp> {
       routes: AppRoutes.routes,
       home: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, authState) {
-          // Show loading indicator while checking auth state
           if (authState is AuthLoading) {
             return const Scaffold(
               body: Center(
@@ -63,15 +62,11 @@ class _MyAppState extends State<MyApp> {
             );
           }
 
-          // Use BlocBuilder for AppUserCubit
           return BlocBuilder<AppUserCubit, AppUserState>(
             builder: (context, userState) {
-              // Show loading indicator while user state is loading
               if (authState is AuthSuccess) {
                 return BlogPage();
               }
-
-              // If not authenticated or auth failed, show login
               return LoginPage();
             },
           );
