@@ -5,6 +5,7 @@ import 'package:blog_app/core/theme/app_pallete.dart';
 import 'package:blog_app/core/utils/show_snackbar.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog_bloc.dart';
+import 'package:blog_app/features/blog/presentation/cubit/reaction_cubit.dart';
 import 'package:blog_app/features/blog/presentation/widgets/blog_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -91,6 +92,10 @@ class _BlogPageState extends State<BlogPage> {
                                   ? AppPallete.gradient2
                                   : AppPallete.gradient3,
                           blog: blog,
+                          userId:
+                              (context.read<AuthBloc>().state as AuthSuccess)
+                                  .user
+                                  .id,
                         );
                       },
                     );

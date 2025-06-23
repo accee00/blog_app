@@ -8,7 +8,11 @@ import 'package:blog_app/features/auth/domain/usecases/log_out_user.dart';
 import 'package:blog_app/features/auth/domain/usecases/user_sign_in.dart';
 import 'package:blog_app/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blog_app/features/blog/domain/usecases/add_reaction_usecase.dart';
 import 'package:blog_app/features/blog/domain/usecases/delete_blog.dart';
+import 'package:blog_app/features/blog/domain/usecases/get_reaction_count.dart';
+import 'package:blog_app/features/blog/domain/usecases/get_user_reaction.dart';
+import 'package:blog_app/features/blog/domain/usecases/remove_reaction_usecase.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blog_app/features/blog/data/datasource/blog_remote_data_source.dart';
 import 'package:blog_app/features/blog/data/repository/blog_repo_imp.dart';
@@ -16,6 +20,7 @@ import 'package:blog_app/features/blog/domain/repository/blog_repository.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/update_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
+import 'package:blog_app/features/blog/presentation/cubit/reaction_cubit.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -145,6 +150,14 @@ void _initBlog() {
       repository: serviceLocator(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => GetReactionCounts(
+      serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(() => GetUserReaction(serviceLocator()));
+  serviceLocator.registerFactory(() => AddReaction(serviceLocator()));
+  serviceLocator.registerFactory(() => RemoveReaction(serviceLocator()));
   // Register BLoC for blog management
   serviceLocator.registerLazySingleton(
     () => BlogBloc(
@@ -154,4 +167,11 @@ void _initBlog() {
       deleteBlog: serviceLocator(),
     ),
   );
+
+  serviceLocator.registerLazySingleton(() => ReactionCubit(
+        serviceLocator(), // GetReactionCounts
+        serviceLocator(), // AddReaction
+        serviceLocator(), // RemoveReaction
+        serviceLocator(), // GetUserReaction
+      ));
 }
