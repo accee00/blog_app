@@ -27,9 +27,9 @@ Future<void> main() async {
       BlocProvider<BlogBloc>(
         create: (_) => serviceLocator<BlogBloc>(),
       ),
-      BlocProvider<ReactionCubit>(
-        create: (_) => serviceLocator<ReactionCubit>(),
-      ),
+      // BlocProvider<ReactionCubit>(
+      //   create: (_) => serviceLocator<ReactionCubit>(),
+      // ),
     ],
     child: MyApp(),
   ));

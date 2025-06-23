@@ -7,6 +7,7 @@ import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/cubit/reaction_cubit.dart';
 import 'package:blog_app/features/blog/presentation/widgets/blog_tile.dart';
+import 'package:blog_app/init_dependency.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -84,18 +85,24 @@ class _BlogPageState extends State<BlogPage> {
                       itemCount: state.blog.length,
                       itemBuilder: (context, index) {
                         final blog = state.blog[index];
-                        return BlogTile(
-                          isPoster: blog.posterId == posterId,
-                          color: index % 3 == 0
-                              ? AppPallete.gradient1
-                              : index % 3 == 1
-                                  ? AppPallete.gradient2
-                                  : AppPallete.gradient3,
-                          blog: blog,
-                          userId:
-                              (context.read<AuthBloc>().state as AuthSuccess)
-                                  .user
-                                  .id,
+                        final userId =
+                            (context.read<AuthBloc>().state as AuthSuccess)
+                                .user
+                                .id;
+
+                        return BlocProvider(
+                          create: (_) => serviceLocator<ReactionCubit>()
+                            ..loadReactions(blog.id),
+                          child: BlogTile(
+                            isPoster: blog.posterId == posterId,
+                            color: index % 3 == 0
+                                ? AppPallete.gradient1
+                                : index % 3 == 1
+                                    ? AppPallete.gradient2
+                                    : AppPallete.gradient3,
+                            blog: blog,
+                            userId: userId,
+                          ),
                         );
                       },
                     );

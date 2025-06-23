@@ -3,7 +3,6 @@ import 'package:blog_app/features/blog/domain/entities/reaction.dart';
 import 'package:blog_app/features/blog/domain/usecases/add_reaction_usecase.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_reaction_count.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_user_reaction.dart';
-import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/features/blog/domain/usecases/remove_reaction_usecase.dart';
 import 'package:equatable/equatable.dart';
 
