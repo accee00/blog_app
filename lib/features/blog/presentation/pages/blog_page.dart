@@ -69,21 +69,31 @@ class _BlogPageState extends State<BlogPage> {
                   (context.read<AppUserCubit>().state as AppUserLoggedIn)
                       .user
                       .id;
-              return ListView.builder(
-                itemCount: state.blog.length,
-                itemBuilder: (context, index) {
-                  final blog = state.blog[index];
-                  return BlogTile(
-                    isPoster: blog.posterId == posterId,
-                    color: index % 3 == 0
-                        ? AppPallete.gradient1
-                        : index % 3 == 1
-                            ? AppPallete.gradient2
-                            : AppPallete.gradient3,
-                    blog: blog,
-                  );
-                },
-              );
+              return state.blog.isEmpty
+                  ? Center(
+                      child: Text(
+                        'Nothing to display. Try adding blogs',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: state.blog.length,
+                      itemBuilder: (context, index) {
+                        final blog = state.blog[index];
+                        return BlogTile(
+                          isPoster: blog.posterId == posterId,
+                          color: index % 3 == 0
+                              ? AppPallete.gradient1
+                              : index % 3 == 1
+                                  ? AppPallete.gradient2
+                                  : AppPallete.gradient3,
+                          blog: blog,
+                        );
+                      },
+                    );
             }
             return SizedBox();
           },

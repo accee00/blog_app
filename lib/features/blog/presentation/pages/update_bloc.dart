@@ -40,7 +40,7 @@ class _UpdateBlocState extends State<UpdateBloc> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Update Blog!"),
+          title: Text(widget.blog.title),
           actions: [
             IconButton(
               onPressed: () {

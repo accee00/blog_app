@@ -57,6 +57,15 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
   }
 
   void _onBlogUpload(BlogUploadEvent event, Emitter<BlogState> emit) async {
+    if (event.title.isEmpty) {
+      emit(BlogFailure('Tile for blog is required'));
+      return;
+    }
+    if (event.topics.isEmpty) {
+      emit(BlogFailure('Select at least one topic'));
+      return;
+    }
+
     final result = await uploadBlog.call(
       UploadBlogParams(
         posterId: event.posterId,

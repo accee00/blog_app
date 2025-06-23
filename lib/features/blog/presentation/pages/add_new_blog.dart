@@ -35,19 +35,19 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   void uploadBlog() {
     final posterId =
         (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
-    if (formkey.currentState!.validate() &&
-        selectedTopic.isNotEmpty &&
-        image != null) {
-      context.read<BlogBloc>().add(
-            BlogUploadEvent(
-              posterId: posterId,
-              title: _blogTitle.text.trim(),
-              content: _blogContent.text.trim(),
-              image: image!,
-              topics: selectedTopic,
-            ),
-          );
+    if (image == null) {
+      showSnackbar(context, 'Image for blog is required');
+      return;
     }
+    context.read<BlogBloc>().add(
+          BlogUploadEvent(
+            posterId: posterId,
+            title: _blogTitle.text.trim(),
+            content: _blogContent.text.trim(),
+            image: image!,
+            topics: selectedTopic,
+          ),
+        );
   }
 
   @override

@@ -63,6 +63,7 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDataSource {
         response.user!.toJson(),
       );
     } catch (e) {
+      print(e.toString());
       throw ServerExceptions(e.toString());
     }
   }
