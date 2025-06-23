@@ -23,6 +23,7 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   List<String> selectedTopic = [];
   File? image;
+
   void selectImage() async {
     final pickimage = await pickImage();
     if (pickimage != null) {
@@ -33,21 +34,27 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   }
 
   void uploadBlog() {
-    final posterId =
-        (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
-    if (image == null) {
-      showSnackbar(context, 'Image for blog is required');
-      return;
+    if (formkey.currentState!.validate()) {
+      final posterId =
+          (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
+      if (image == null) {
+        showSnackbar(context, 'Image for blog is required');
+        return;
+      }
+      if (selectedTopic.isEmpty) {
+        showSnackbar(context, 'Please select at least one topic');
+        return;
+      }
+      context.read<BlogBloc>().add(
+            BlogUploadEvent(
+              posterId: posterId,
+              title: _blogTitle.text.trim(),
+              content: _blogContent.text.trim(),
+              image: image!,
+              topics: selectedTopic,
+            ),
+          );
     }
-    context.read<BlogBloc>().add(
-          BlogUploadEvent(
-            posterId: posterId,
-            title: _blogTitle.text.trim(),
-            content: _blogContent.text.trim(),
-            image: image!,
-            topics: selectedTopic,
-          ),
-        );
   }
 
   @override
@@ -61,14 +68,37 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'Create Blog',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+        ),
         actions: [
-          IconButton(
-            onPressed: () {
-              uploadBlog();
-            },
-            icon: Icon(
-              Icons.done_outlined,
-              size: 30,
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: TextButton.icon(
+              onPressed: uploadBlog,
+              icon: const Icon(
+                Icons.publish_rounded,
+                size: 20,
+              ),
+              label: const Text(
+                'Publish',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                backgroundColor: AppPallete.gradient1.withOpacity(0.1),
+                foregroundColor: AppPallete.gradient1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
           ),
         ],
@@ -87,129 +117,235 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
         },
         builder: (context, state) {
           if (state is BlogLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+            return const Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      selectImage();
-                    },
-                    child: Form(
-                      key: formkey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          image != null
-                              ? GestureDetector(
-                                  onTap: selectImage,
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    height: 150,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.file(
-                                        image!,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    selectImage();
-                                  },
-                                  child: DottedBorder(
-                                    color: AppPallete.borderColor,
-                                    dashPattern: const [10, 4],
-                                    radius: const Radius.circular(10),
-                                    borderType: BorderType.RRect,
-                                    strokeCap: StrokeCap.round,
-                                    child: SizedBox(
-                                      height: 150,
-                                      width: double.infinity,
-                                      child: const Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.folder_open,
-                                            size: 40,
-                                          ),
-                                          SizedBox(height: 15),
-                                          Text(
-                                            'Select your image',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                        ],
-                      ),
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text(
+                    'Publishing your blog...',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
+                ],
+              ),
+            );
+          }
+          return Form(
+            key: formkey,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Image Upload Section
+                    const Text(
+                      'Cover Image',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    GestureDetector(
+                      onTap: selectImage,
+                      child: Container(
+                        width: double.infinity,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: image != null
+                            ? Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Image.file(
+                                      image!,
+                                      width: double.infinity,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 12,
+                                    right: 12,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.6),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: const Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : DottedBorder(
+                                color: Colors.grey.withOpacity(0.5),
+                                dashPattern: const [8, 4],
+                                radius: const Radius.circular(16),
+                                borderType: BorderType.RRect,
+                                strokeCap: StrokeCap.round,
+                                strokeWidth: 2,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    color: Colors.grey.withOpacity(0.05),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: AppPallete.gradient1
+                                              .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
+                                        child: Icon(
+                                          Icons.add_photo_alternate_outlined,
+                                          size: 32,
+                                          color: AppPallete.gradient1,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        'Add Cover Image',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Tap to select an image',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey.withOpacity(0.7),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // Topics Section
+                    const Text(
+                      'Select Topics',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         'Technology',
                         'Business',
                         'Programming',
                         'Entertainment',
-                      ]
-                          .map(
-                            (e) => Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  selectedTopic.contains(e)
-                                      ? selectedTopic.remove(e)
-                                      : selectedTopic.add(e);
-                                  // print(selectedTopic);
-                                  setState(() {});
-                                },
-                                child: Chip(
-                                  color: selectedTopic.contains(e)
-                                      ? WidgetStatePropertyAll(
-                                          AppPallete.gradient1)
-                                      : null,
-                                  side: selectedTopic.contains(e)
-                                      ? null
-                                      : BorderSide(
-                                          color: AppPallete.borderColor,
-                                        ),
-                                  label: Text(e),
-                                ),
+                      ].map((topic) {
+                        final isSelected = selectedTopic.contains(topic);
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (isSelected) {
+                                selectedTopic.remove(topic);
+                              } else {
+                                selectedTopic.add(topic);
+                              }
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppPallete.gradient1
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppPallete.gradient1
+                                    : Colors.grey.withOpacity(0.3),
+                                width: 1.5,
                               ),
                             ),
-                          )
-                          .toList(),
+                            child: Text(
+                              topic,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: isSelected ? Colors.white : null,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
-                  ),
-                  BlogEditor(
-                    controller: _blogTitle,
-                    hintText: "Blog title",
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  BlogEditor(
-                    controller: _blogContent,
-                    hintText: "Blog content",
-                  )
-                ],
+
+                    const SizedBox(height: 32),
+
+                    // Title Section
+                    const Text(
+                      'Blog Title',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    BlogEditor(
+                      controller: _blogTitle,
+                      hintText: "Enter an engaging title for your blog...",
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // Content Section
+                    const Text(
+                      'Blog Content',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    BlogEditor(
+                      controller: _blogContent,
+                      hintText: "Write your blog content here...",
+                    ),
+
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
           );
