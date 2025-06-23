@@ -31,7 +31,6 @@ class _BlogTileState extends State<BlogTile>
   ReactionType defaultReaction = ReactionType.like;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -57,18 +56,15 @@ class _BlogTileState extends State<BlogTile>
   }
 
   void _onTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
     _animationController.forward();
   }
 
   void _onTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
     _animationController.reverse();
     _navigateToBlogViewer();
   }
 
   void _onTapCancel() {
-    setState(() => _isPressed = false);
     _animationController.reverse();
   }
 
