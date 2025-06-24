@@ -37,6 +37,10 @@ class _SignupPageState extends State<SignupPage> {
         padding: const EdgeInsets.all(15.0),
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
+            if (state is AuthSuccess) {
+              showSnackbar(context, 'Login to continue.');
+              Navigator.pushNamed(context, AppRoutes.signInRoute);
+            }
             if (state is AuthFailure) {
               showSnackbar(context, state.message);
             }
