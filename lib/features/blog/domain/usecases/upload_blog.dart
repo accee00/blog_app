@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/core/usecase/usecase.dart';
 import 'package:blog_app/features/blog/domain/entities/blog.dart';
@@ -27,7 +27,7 @@ class UploadBlogParams {
   final String posterId;
   final String title;
   final String content;
-  final File image;
+  final Uint8List image;
   final List<String> topics;
 
   UploadBlogParams({

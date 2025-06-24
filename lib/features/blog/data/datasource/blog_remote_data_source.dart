@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:blog_app/core/error/exception.dart';
 import 'package:blog_app/features/blog/data/model/blog_model.dart';
 import 'package:blog_app/features/blog/data/model/reaction_model.dart';
@@ -8,7 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract interface class BlogRemoteDataSource {
   Future<BlogModel> uploadBlog(BlogModel blog);
   Future<String> uploadBlogImage({
-    required File image,
+    required Uint8List image,
     required BlogModel blog,
   });
   Future<List<BlogModel>> getAllBlog();
@@ -56,12 +56,14 @@ class BlogRemoteDataSourceImp extends BlogRemoteDataSource {
 
   @override
   Future<String> uploadBlogImage({
-    required File image,
+    required Uint8List image,
     required BlogModel blog,
   }) async {
     try {
       // To access supabase storage we can use client.storage.from("container_name").
-      await supabaseClient.storage.from('blog_images').upload(blog.id, image);
+      await supabaseClient.storage
+          .from('blog_images')
+          .uploadBinary(blog.id, image);
       return supabaseClient.storage.from('blog_images').getPublicUrl(blog.id);
     } catch (e) {
       throw ServerExceptions(e.toString());

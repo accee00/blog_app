@@ -7,7 +7,7 @@ final class BlogUploadEvent extends BlogEvent {
   final String posterId;
   final String title;
   final String content;
-  final File image;
+  final Uint8List image;
   final List<String> topics;
 
   BlogUploadEvent({

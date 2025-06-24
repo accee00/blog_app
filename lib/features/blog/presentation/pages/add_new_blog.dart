@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:blog_app/core/cubit/app_user/app_user_cubit.dart';
 import 'package:blog_app/core/routes/app_routes.dart';
 import 'package:blog_app/core/utils/pick_image.dart';
@@ -22,7 +22,7 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   final TextEditingController _blogContent = TextEditingController();
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   List<String> selectedTopic = [];
-  File? image;
+  Uint8List? image;
 
   void selectImage() async {
     final pickimage = await pickImage();
@@ -171,8 +171,8 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(16),
-                                    child: Image.file(
-                                      image!,
+                                    child: Image.memory(
+                                      image!, // <-- fix here
                                       width: double.infinity,
                                       height: 200,
                                       fit: BoxFit.cover,
@@ -197,6 +197,7 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                                 ],
                               )
                             : DottedBorder(
+                                // ignore: deprecated_member_use
                                 color: Colors.grey.withOpacity(0.5),
                                 dashPattern: const [8, 4],
                                 radius: const Radius.circular(16),

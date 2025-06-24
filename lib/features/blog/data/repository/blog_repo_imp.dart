@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:blog_app/core/error/exception.dart';
 import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/features/blog/data/datasource/blog_remote_data_source.dart';
@@ -16,7 +16,7 @@ class BlogRepoImp implements BlogRepository {
 
   @override
   Future<Either<Failure, BlogModel>> uploadBlog({
-    required File image,
+    required Uint8List image,
     required String title,
     required String content,
     required String posterId,
